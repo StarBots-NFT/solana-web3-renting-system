@@ -36,6 +36,7 @@ pub struct ListItem<'info> {
 
 pub fn exec(ctx: Context<ListItem>, price: u64, rental_period: u64, is_continue_list: u8) -> Result<()> {
     let item = &mut ctx.accounts.item;
+
     let transfer_ctx = CpiContext::new(
         ctx.accounts.token_program.to_account_info(),
         token::Transfer {
@@ -44,8 +45,8 @@ pub fn exec(ctx: Context<ListItem>, price: u64, rental_period: u64, is_continue_
             authority: ctx.accounts.authority.to_account_info(),
         },
     );
-
     token::transfer(transfer_ctx, 1)?;
+
     item.owner_address = ctx.accounts.authority.key();
     item.nft_address = ctx.accounts.mint.key();
     item.price = price;

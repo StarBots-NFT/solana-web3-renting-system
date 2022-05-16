@@ -26,22 +26,41 @@ async function main() {
     // Generate the program client from IDL.
 
     const idl = await anchor.Program.fetchIdl(programId.toString());
-    console.log("idl: ", idl.instructions[2])
     const program = new anchor.Program(idl, programId);
-    const item = new anchor.web3.PublicKey("D9q2DCsx1hwCxcAqoZY8yMw45SJU3UuTsx9G7E81yCiN")
-    const ownerAddress = new anchor.web3.PublicKey("2z5Hdf8f5Z9EcNbybvcNRtQj3WVychSD2SYNmSaAy1dZ")
+    const mint = new anchor.web3.PublicKey("5agvRvJLpx3tq5VcFgwXaWS7CQna1XyfHzTxKLGQVaqE")
+    const item = await web3.PublicKey.findProgramAddress(
+        [Buffer.from('ballot'), mint.toBuffer(), provider.wallet.publicKey.toBuffer()],
+        program.programId,
+    )
 
-    const tx = await program.rpc.rent({
+    const [treasurerPublicKey] = await web3.PublicKey.findProgramAddress(
+        [Buffer.from('treasurer'), item[0].toBuffer()],
+        program.programId,
+    )
+    let treasurer = treasurerPublicKey
+
+    const nftAta = new anchor.web3.PublicKey("DUr4sof7YikLnC384FQiyAk33s6cYsog5y4JbmLx96jn");
+    let nftHolder = await utils.token.associatedAddress({
+        mint: mint,
+        owner: treasurerPublicKey,
+    })
+
+    console.log('idl: ', idl.instructions[0].accounts)
+
+    const tx = await program.rpc.listItem(new BN(1), new BN(2), new BN(1),{
         accounts: {
-            signer: provider.wallet.publicKey,
-            item: item,
-            ownerAddress: ownerAddress,
+            authority: provider.wallet.publicKey,
+            item: item[0],
+            treasurer: treasurer,
+            mint: mint,
+            nftHolder: nftHolder,
+            nftAta: nftAta,
             systemProgram: web3.SystemProgram.programId,
             tokenProgram: utils.token.TOKEN_PROGRAM_ID,
             associatedTokenProgram: utils.token.ASSOCIATED_PROGRAM_ID,
             rent: web3.SYSVAR_RENT_PUBKEY,
         },
-        signers: []
+        signers: [keypair]
     })
     console.log('tx: ', tx)
 }

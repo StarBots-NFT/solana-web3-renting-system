@@ -22,6 +22,10 @@ pub mod rent {
     pub fn claim(ctx: Context<Claim>) -> Result<()> {
         claim::exec(ctx)
     }
+
+    pub fn rent(ctx: Context<RentItem>) -> Result<()> {
+        rent_item::exec(ctx)
+    }
 }
 
 #[derive(Accounts)]

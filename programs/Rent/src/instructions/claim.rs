@@ -25,12 +25,11 @@ pub struct Claim<'info> {
 
     #[account(
     mut,
-    close = owner_address,
     associated_token::mint = nft_address,
     associated_token::authority = treasurer
     )]
     pub nft_holder: Account<'info, token::TokenAccount>,
-
+    #[account(mut)]
     pub ata_address: Account<'info, token::TokenAccount>,
     // System Program Address
     pub system_program: Program<'info, System>,
@@ -47,11 +46,19 @@ pub fn exec(ctx: Context<Claim>) -> Result<()> {
         return err!(ErrorCode::NotActiveCandidate);
     }
 
+    msg!("nft holder: {:?}", ctx.accounts.nft_holder.to_account_info());
+    msg!("ata_address: {:?}", ctx.accounts.ata_address.to_account_info());
+    msg!("treasurer: {:?}", ctx.accounts.treasurer.to_account_info());
+
     let seeds: &[&[&[u8]]] = &[&[
         "treasurer".as_ref(),
         &item.key().to_bytes(),
         &[*ctx.bumps.get("treasurer").unwrap()],
     ]];
+
+    msg!("seeds: {:?}", seeds);
+    msg!("item: {:?}", item.key());
+    msg!("treasurer: {:?}", ctx.accounts.treasurer.to_account_info());
 
     let transfer_ctx = CpiContext::new_with_signer(
         ctx.accounts.token_program.to_account_info(),
@@ -64,5 +71,6 @@ pub fn exec(ctx: Context<Claim>) -> Result<()> {
     );
 
     token::transfer(transfer_ctx, 1)?;
+    msg!("done");
     Ok(())
 }
