@@ -33,12 +33,13 @@ pub fn exec(ctx: Context<RentItem>) -> Result<()> {
     msg!("num_of_day: {:?}", item.num_of_day);
     msg!("owner: {:?}", item.owner_address);
     msg!("renter: {:?}", item.rent_address);
+    msg!("price: {:?}", item.price);
     if item.num_of_day + item.start_date > now as u64 && item.rent_address.to_string() != "11111111111111111111111111111111"  {
-        return err!(ErrorCode::NotActiveCandidate);
+        return err!(ErrorCode::NotActiveItem);
     }
 
     if item.rent_address.to_string() != "11111111111111111111111111111111" && item.is_continue_listing != 1 {
-        return err!(ErrorCode::NotActiveCandidate);
+        return err!(ErrorCode::NotActiveItem);
     }
 
     let ix = anchor_lang::solana_program::system_instruction::transfer(

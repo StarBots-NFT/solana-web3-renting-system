@@ -44,7 +44,7 @@ pub fn exec(ctx: Context<Claim>) -> Result<()> {
     msg!("now: {:?}", now);
     msg!("start_date: {:?}", item.start_date);
     if item.num_of_day + item.start_date > now as u64 {
-        return err!(ErrorCode::NotActiveCandidate);
+        return err!(ErrorCode::NotActiveItem);
     }
 
     msg!("nft holder: {:?}", ctx.accounts.nft_holder.to_account_info());

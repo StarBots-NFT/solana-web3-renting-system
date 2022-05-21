@@ -50,11 +50,14 @@ async function main() {
     let treasurer = treasurerPublicKey
 
     console.log('idl: ', idl.instructions[0].accounts)
+    console.log('idl: ', idl.instructions[0].args)
+    console.log('ata: ', utils.token.ASSOCIATED_PROGRAM_ID.toString())
+    console.log('rent: ', web3.SYSVAR_RENT_PUBKEY.toString())
 
     // price tính theo lampart là bội số của 10
-    const price = new BN(10);
+    const price = new BN(110);
     // priods tính theo s là bội số của ngày
-    const period = new BN(2 * 86400);
+    const period = new BN(0 * 86400);
     // isListing : 1: tiếp tục tự động list, 0: ko tiếp tục tự động list
     const isListing = new BN(1)
     const tx = await program.rpc.listItem(price, period, isListing,{

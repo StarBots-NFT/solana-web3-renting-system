@@ -2,8 +2,10 @@ use anchor_lang::prelude::*;
 
 #[error_code]
 pub enum ErrorCode {
-  #[msg("The candidate isn't active")]
-  NotActiveCandidate,
-  #[msg("The candidate isn't ended")]
-  NotEndedCandidate,
+  #[msg("The item isn't active")]
+  NotActiveItem,
+  #[msg("The item isn't ended")]
+  NotEndedItem,
+  #[msg("wrong period time")]
+  InvalidatePeriodTime,
 }

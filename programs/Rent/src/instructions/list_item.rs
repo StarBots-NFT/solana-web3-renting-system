@@ -1,6 +1,7 @@
 use crate::schema::*;
 use anchor_lang::prelude::*;
 use anchor_spl::{associated_token, token};
+use crate::errors::ErrorCode;
 
 #[derive(Accounts)]
 pub struct ListItem<'info> {
@@ -37,6 +38,9 @@ pub struct ListItem<'info> {
 pub fn exec(ctx: Context<ListItem>, price: u64, rental_period: u64, is_continue_list: u8) -> Result<()> {
     let item = &mut ctx.accounts.item;
 
+    if rental_period <= 0 {
+        return err!(ErrorCode::InvalidatePeriodTime);
+    }
     let transfer_ctx = CpiContext::new(
         ctx.accounts.token_program.to_account_info(),
         token::Transfer {
