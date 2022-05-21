@@ -42,6 +42,7 @@ pub fn exec(ctx: Context<Claim>) -> Result<()> {
     let item = &mut ctx.accounts.item;
     let now = Clock::get().unwrap().unix_timestamp;
     msg!("now: {:?}", now);
+    msg!("start_date: {:?}", item.start_date);
     if item.num_of_day + item.start_date > now as u64 {
         return err!(ErrorCode::NotActiveCandidate);
     }

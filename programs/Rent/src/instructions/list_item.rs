@@ -19,7 +19,7 @@ pub struct ListItem<'info> {
     pub treasurer: AccountInfo<'info>,
     pub mint: Box<Account<'info, token::Mint>>,
     #[account(
-    init,
+    init_if_needed,
     payer = authority,
     associated_token::mint = mint,
     associated_token::authority = treasurer

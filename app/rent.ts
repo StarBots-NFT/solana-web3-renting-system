@@ -28,8 +28,9 @@ async function main() {
     const idl = await anchor.Program.fetchIdl(programId.toString());
     console.log("idl: ", idl.instructions[2])
     const program = new anchor.Program(idl, programId);
-    const item = new anchor.web3.PublicKey("D9q2DCsx1hwCxcAqoZY8yMw45SJU3UuTsx9G7E81yCiN")
+    const item = new anchor.web3.PublicKey("DL1Nq2wwMLvom6PRSojiQ9BrM584UPYyTHwgpDY7Yr3m")
     const ownerAddress = new anchor.web3.PublicKey("2z5Hdf8f5Z9EcNbybvcNRtQj3WVychSD2SYNmSaAy1dZ")
+    const holder = new anchor.web3.PublicKey("6jhCeKn1NSdwxgMXFyEpRAd8t7qaLVbBnr82nhELuFe")
 
     const tx = await program.rpc.rent({
         accounts: {
@@ -40,6 +41,7 @@ async function main() {
             tokenProgram: utils.token.TOKEN_PROGRAM_ID,
             associatedTokenProgram: utils.token.ASSOCIATED_PROGRAM_ID,
             rent: web3.SYSVAR_RENT_PUBKEY,
+            holder: holder,
         },
         signers: []
     })

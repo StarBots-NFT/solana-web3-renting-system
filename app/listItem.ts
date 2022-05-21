@@ -27,27 +27,37 @@ async function main() {
 
     const idl = await anchor.Program.fetchIdl(programId.toString());
     const program = new anchor.Program(idl, programId);
-    const mint = new anchor.web3.PublicKey("5agvRvJLpx3tq5VcFgwXaWS7CQna1XyfHzTxKLGQVaqE")
+    const mint = new anchor.web3.PublicKey("EdaFVrLCmdDXMpmSCH6jkCyNbL4eUdUXQFCPXsLqiEVR")
+
     const item = await web3.PublicKey.findProgramAddress(
         [Buffer.from('ballot'), mint.toBuffer(), provider.wallet.publicKey.toBuffer()],
         program.programId,
     )
 
+    const nftAta = new anchor.web3.PublicKey("4DD2TnFRbhCtMpvmAawJGsgRY3vs64RNZhSEzmfDRune");
+
     const [treasurerPublicKey] = await web3.PublicKey.findProgramAddress(
         [Buffer.from('treasurer'), item[0].toBuffer()],
         program.programId,
     )
-    let treasurer = treasurerPublicKey
+    console.log("treasurerPublicKey: ", treasurerPublicKey.toString())
 
-    const nftAta = new anchor.web3.PublicKey("DUr4sof7YikLnC384FQiyAk33s6cYsog5y4JbmLx96jn");
     let nftHolder = await utils.token.associatedAddress({
         mint: mint,
         owner: treasurerPublicKey,
     })
 
+    let treasurer = treasurerPublicKey
+
     console.log('idl: ', idl.instructions[0].accounts)
 
-    const tx = await program.rpc.listItem(new BN(1), new BN(2), new BN(1),{
+    // price tính theo lampart là bội số của 10
+    const price = new BN(10);
+    // priods tính theo s là bội số của ngày
+    const period = new BN(2 * 86400);
+    // isListing : 1: tiếp tục tự động list, 0: ko tiếp tục tự động list
+    const isListing = new BN(1)
+    const tx = await program.rpc.listItem(price, period, isListing,{
         accounts: {
             authority: provider.wallet.publicKey,
             item: item[0],
