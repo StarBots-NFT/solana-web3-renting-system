@@ -4,11 +4,15 @@ import * as bs58 from 'bs58';
 import {web3, utils, BN, Accounts} from '@project-serum/anchor'
 import {IdlAccountItem} from "@project-serum/anchor/dist/cjs/idl";
 import {ASSOCIATED_PROGRAM_ID} from "@project-serum/anchor/src/utils/token";
+import {PublicKey} from "@solana/web3.js";
 
 const provider = anchor.AnchorProvider.env();
 
 anchor.setProvider(provider);
 
+export const TOKEN_METADATA_PROGRAM_ID = new PublicKey(
+    'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s',
+);
 
 async function main() {
     // Read the generated IDL.
@@ -27,14 +31,23 @@ async function main() {
 
     const idl = await anchor.Program.fetchIdl(programId.toString());
     const program = new anchor.Program(idl, programId);
-    const mint = new anchor.web3.PublicKey("EdaFVrLCmdDXMpmSCH6jkCyNbL4eUdUXQFCPXsLqiEVR")
+    const mint = new anchor.web3.PublicKey("AFFr2Bg6r5ZbKnXK2ny3agBPAesJZEy8H2jHGWTrpUMe")
 
     const item = await web3.PublicKey.findProgramAddress(
         [Buffer.from('ballot'), mint.toBuffer(), provider.wallet.publicKey.toBuffer()],
         program.programId,
     )
 
-    const nftAta = new anchor.web3.PublicKey("4DD2TnFRbhCtMpvmAawJGsgRY3vs64RNZhSEzmfDRune");
+    const metaDataAddress = await anchor.web3.PublicKey.findProgramAddress(
+        [
+            Buffer.from('metadata'),
+            TOKEN_METADATA_PROGRAM_ID.toBuffer(),
+            mint.toBuffer(),
+        ],
+        TOKEN_METADATA_PROGRAM_ID,
+    )
+
+    const nftAta = new anchor.web3.PublicKey("GqquvykDyo9diYN8pgbtb11bJQqQ1U8vDGMbm8gsYPTt");
 
     const [treasurerPublicKey] = await web3.PublicKey.findProgramAddress(
         [Buffer.from('treasurer'), item[0].toBuffer()],
@@ -53,6 +66,8 @@ async function main() {
     console.log('idl: ', idl.instructions[0].args)
     console.log('ata: ', utils.token.ASSOCIATED_PROGRAM_ID.toString())
     console.log('rent: ', web3.SYSVAR_RENT_PUBKEY.toString())
+    console.log('mint: ', mint.toString())
+    console.log('metadata: ', metaDataAddress[0].toString())
 
     // price tính theo lampart là bội số của 10
     const price = new BN(110);
@@ -68,12 +83,12 @@ async function main() {
             mint: mint,
             nftHolder: nftHolder,
             nftAta: nftAta,
+            nftMetadataAddress: metaDataAddress[0],
             systemProgram: web3.SystemProgram.programId,
             tokenProgram: utils.token.TOKEN_PROGRAM_ID,
             associatedTokenProgram: utils.token.ASSOCIATED_PROGRAM_ID,
             rent: web3.SYSVAR_RENT_PUBKEY,
         },
-        signers: [keypair]
     })
     console.log('tx: ', tx)
 }

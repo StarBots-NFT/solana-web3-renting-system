@@ -27,11 +27,11 @@ async function main() {
 
     const idl = await anchor.Program.fetchIdl(programId.toString());
     const program = new anchor.Program(idl, programId);
-    const mint = new anchor.web3.PublicKey("EdaFVrLCmdDXMpmSCH6jkCyNbL4eUdUXQFCPXsLqiEVR")
-    const item = new anchor.web3.PublicKey("DL1Nq2wwMLvom6PRSojiQ9BrM584UPYyTHwgpDY7Yr3m")
-    const nftAta = new anchor.web3.PublicKey("4DD2TnFRbhCtMpvmAawJGsgRY3vs64RNZhSEzmfDRune")
-    const treasurer = new anchor.web3.PublicKey("CV73pqFo583smSdjTDGYnjVXVXCKq9KmtUtkBdPoVdcq")
-    let nftHolder = new anchor.web3.PublicKey("EsQFaERsQYuh7GqY53pmWTUHvhcSeCweVNE2RqMphFok")
+    const mint = new anchor.web3.PublicKey("AFFr2Bg6r5ZbKnXK2ny3agBPAesJZEy8H2jHGWTrpUMe")
+    const item = new anchor.web3.PublicKey("4Cx5Z7n2YEhKobWq4EBKW2hnBxJSLkTGk3khnaVsNJx6")
+    const nftAta = new anchor.web3.PublicKey("GqquvykDyo9diYN8pgbtb11bJQqQ1U8vDGMbm8gsYPTt")
+    const treasurer = new anchor.web3.PublicKey("JARESSMjXj7EacAsTJvhdjkWq82ULLeSFnMUhuvG98n6")
+    let nftHolder = new anchor.web3.PublicKey("EigT1aERYDX8D8n8GFFFHK1UYgjrs8oxz2mQbJhBiG16")
 
     const tx = await program.rpc.claim({
         accounts: {
@@ -45,8 +45,7 @@ async function main() {
             tokenProgram: utils.token.TOKEN_PROGRAM_ID,
             associatedTokenProgram: utils.token.ASSOCIATED_PROGRAM_ID,
             rent: web3.SYSVAR_RENT_PUBKEY,
-        },
-        signers: [keypair]
+        }
     })
     console.log('tx: ', tx)
 }

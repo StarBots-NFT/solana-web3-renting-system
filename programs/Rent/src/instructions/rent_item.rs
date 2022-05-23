@@ -42,6 +42,10 @@ pub fn exec(ctx: Context<RentItem>) -> Result<()> {
         return err!(ErrorCode::NotActiveItem);
     }
 
+    if item.owner_address.to_string() != ctx.accounts.owner_address.key().to_string() {
+        return err!(ErrorCode::WrongOwnerAddress);
+    }
+
     let ix = anchor_lang::solana_program::system_instruction::transfer(
         &ctx.accounts.signer.key(),
         &ctx.accounts.owner_address.key(),
