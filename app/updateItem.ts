@@ -37,52 +37,23 @@ async function main() {
         [Buffer.from('ballot'), mint.toBuffer(), provider.wallet.publicKey.toBuffer()],
         program.programId,
     )
-
-    const metaDataAddress = await anchor.web3.PublicKey.findProgramAddress(
-        [
-            Buffer.from('metadata'),
-            TOKEN_METADATA_PROGRAM_ID.toBuffer(),
-            mint.toBuffer(),
-        ],
-        TOKEN_METADATA_PROGRAM_ID,
-    )
-
-    const nftAta = new anchor.web3.PublicKey("HWa3B6zpKy9EA4m8FdUE4nMKGukMSdz2m6sy3csVVcsK");
-
-    const [treasurerPublicKey] = await web3.PublicKey.findProgramAddress(
-        [Buffer.from('treasurer'), item[0].toBuffer()],
-        program.programId,
-    )
-    console.log("treasurerPublicKey: ", treasurerPublicKey.toString())
-
-    let nftHolder = await utils.token.associatedAddress({
-        mint: mint,
-        owner: treasurerPublicKey,
-    })
-
-    let treasurer = treasurerPublicKey
-
-    console.log('idl: ', idl.instructions[0].accounts)
+    console.log('idl: ', idl.instructions)
     console.log('idl: ', idl.instructions[0].args)
     console.log('ata: ', utils.token.ASSOCIATED_PROGRAM_ID.toString())
     console.log('rent: ', web3.SYSVAR_RENT_PUBKEY.toString())
     console.log('mint: ', mint.toString())
-    console.log('metadata: ', metaDataAddress[0].toString())
 
     // price tính theo lampart là bội số của 10
     const price = new BN(110);
     // priods tính theo s là bội số của ngày
     const period = new BN(0 * 86400);
     // isListing : 1: tiếp tục tự động list, 0: ko tiếp tục tự động list
-    const isListing = new BN(1)
-    const tx = await program.rpc.listItem(price, period, isListing,{
+    const isListing = new BN(0)
+    const tx = await program.rpc.updateItem(price, period, isListing,{
         accounts: {
             authority: provider.wallet.publicKey,
             item: item[0],
-            treasurer: treasurer,
-            mint: mint,
-            nftHolder: nftHolder,
-            nftAta: nftAta,
+            mint,
             systemProgram: web3.SystemProgram.programId,
             tokenProgram: utils.token.TOKEN_PROGRAM_ID,
             associatedTokenProgram: utils.token.ASSOCIATED_PROGRAM_ID,

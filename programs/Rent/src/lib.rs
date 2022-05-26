@@ -26,6 +26,10 @@ pub mod rent {
     pub fn rent(ctx: Context<RentItem>) -> Result<()> {
         rent_item::exec(ctx)
     }
+
+    pub fn update_item(ctx: Context<UpdateItem>, price: u64, rental_period: u64, is_continue_list: u8) -> Result<()> {
+        update_item::exec(ctx, price, rental_period, is_continue_list)
+    }
 }
 
 #[derive(Accounts)]

@@ -29,9 +29,6 @@ pub struct ListItem<'info> {
     pub nft_holder: Account<'info, token::TokenAccount>,
     #[account(mut)]
     pub nft_ata: Account<'info, token::TokenAccount>,
-    /// CHECK: Just a pure account
-    #[account()]
-    pub nft_metadata_address: AccountInfo<'info>,
     // System Program Address
     pub system_program: Program<'info, System>,
     pub token_program: Program<'info, token::Token>,
@@ -41,19 +38,6 @@ pub struct ListItem<'info> {
 
 pub fn exec(ctx: Context<ListItem>, price: u64, rental_period: u64, is_continue_list: u8) -> Result<()> {
     let item = &mut ctx.accounts.item;
-    let nft_metadata_address= &ctx.accounts.nft_metadata_address.to_account_info();
-    let nft_metadata = Metadata::from_account_info(nft_metadata_address)?;
-    let nft_collection = nft_metadata.collection.ok_or(ErrorCode::WrongCollectionAddress)?;
-    msg!("metadata: {:?}", nft_collection.key.to_string());
-    if (nft_collection.key.to_string() != "2wT1CWy9qHA8znjzugihbXhVTJ1ABkum4ZVutTi4Qz7L"
-        && nft_collection.key.to_string() != "JC9QVSYBaDfiZybFqT3T8F7v2HGzaWsuUEMaJcSb4cm4")
-        || nft_collection.verified != true {
-        msg!("wrong collection address: {:?}", nft_collection.key);
-        return err!(ErrorCode::WrongCollectionAddress);
-    }
-
-
-
 
     if rental_period < 0 {
         return err!(ErrorCode::InvalidatePeriodTime);

@@ -6,3 +6,6 @@ pub use claim::*;
 
 pub mod rent_item;
 pub use rent_item::*;
+
+pub mod update_item;
+pub use update_item::*;

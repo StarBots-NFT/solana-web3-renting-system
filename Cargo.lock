@@ -9,6 +9,7 @@ dependencies = [
  "anchor-lang",
  "anchor-spl",
  "mpl-token-metadata",
+ "spl-token",
  "static-pubkey",
 ]
 
