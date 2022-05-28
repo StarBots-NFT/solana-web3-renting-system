@@ -39,6 +39,10 @@ pub struct ListItem<'info> {
 pub fn exec(ctx: Context<ListItem>, price: u64, rental_period: u64, is_continue_list: u8) -> Result<()> {
     let item = &mut ctx.accounts.item;
 
+    if is_continue_list > 2 || is_continue_list < 0 {
+        return err!(ErrorCode::InvalidateIsContinute);
+    }
+
     if rental_period < 0 {
         return err!(ErrorCode::InvalidatePeriodTime);
     }
