@@ -1,4 +1,3 @@
-use std::arch::x86_64::_mm_add_sd;
 use crate::schema::*;
 use anchor_lang::prelude::*;
 use anchor_spl::{associated_token, token};
@@ -11,6 +10,7 @@ pub struct UpdateItem<'info> {
     pub authority: Signer<'info>,
     pub mint: Account<'info, token::Mint>,
     #[account(
+    mut,
     seeds = [b"ballot".as_ref(), &mint.key().to_bytes(), &authority.key().to_bytes()],
     bump
     )]

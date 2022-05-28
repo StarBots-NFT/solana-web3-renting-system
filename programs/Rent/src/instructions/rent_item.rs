@@ -74,6 +74,11 @@ pub fn exec(ctx: Context<RentItem>) -> Result<()> {
 
     item.rent_address = ctx.accounts.signer.key();
     item.start_date = now as u64;
-
+    msg!("num_of_day: {:?}", item.num_of_day);
+    msg!("owner: {:?}", item.owner_address);
+    msg!("renter: {:?}", item.rent_address);
+    msg!("price: {:?}", item.price);
+    msg!("start_date: {:?}", item.start_date);
+    msg!("item: {:?}", item.key());
     Ok(())
 }

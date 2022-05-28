@@ -28,25 +28,20 @@ async function main() {
     const idl = await anchor.Program.fetchIdl(programId.toString());
     console.log("idl: ", idl.instructions[2])
     const program = new anchor.Program(idl, programId);
-    const mint = new anchor.web3.PublicKey("ANY8uZd9kxDoxPUvQWGf1Teki4CEaW5CXK5N1sBJFm9X")
-    const owner = new anchor.web3.PublicKey("6zNhgoSkAWz81sy3fu8AwiKUqEScTkQVtbGCMFrxuD3T")
-    const item = await web3.PublicKey.findProgramAddress(
-        [Buffer.from('ballot'), mint.toBuffer(), owner.toBuffer()],
-        program.programId,
-    )
-    const ownerAddress = new anchor.web3.PublicKey("2z5Hdf8f5Z9EcNbybvcNRtQj3WVychSD2SYNmSaAy1dZ")
-    const holder = new anchor.web3.PublicKey("6jhCeKn1NSdwxgMXFyEpRAd8t7qaLVbBnr82nhELuFe")
+    const item = new anchor.web3.PublicKey("AwX5gPB31pv54yAVnLxsK2M58XmFBoXyhe4igGUH3QJV")
+    const ownerAddress = new anchor.web3.PublicKey("6zNhgoSkAWz81sy3fu8AwiKUqEScTkQVtbGCMFrxuD3T")
+    const holder = new anchor.web3.PublicKey("FR7VGHVcuowQwypxc5mFEc5qGeG9KK8MctuXzMPAhdCj")
 
     const tx = await program.rpc.rent({
         accounts: {
             signer: provider.wallet.publicKey,
-            ownerAddress: owner,
-            item: item[0],
-            holder: holder,
+            item: item,
+            ownerAddress: ownerAddress,
             systemProgram: web3.SystemProgram.programId,
             tokenProgram: utils.token.TOKEN_PROGRAM_ID,
             associatedTokenProgram: utils.token.ASSOCIATED_PROGRAM_ID,
             rent: web3.SYSVAR_RENT_PUBKEY,
+            holder: holder,
         },
         signers: []
     })
