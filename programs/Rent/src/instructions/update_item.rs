@@ -1,3 +1,4 @@
+use std::arch::x86_64::_mm_add_sd;
 use crate::schema::*;
 use anchor_lang::prelude::*;
 use anchor_spl::{associated_token, token};
@@ -28,22 +29,34 @@ pub fn exec(ctx: Context<UpdateItem>, price: u64, rental_period: u64, is_continu
         return err!(ErrorCode::InvalidatePeriodTime);
     }
 
-    if item.rent_address.to_string() != "11111111111111111111111111111111" && item.is_continue_listing != 1 {
-        return err!(ErrorCode::NotActiveItem);
-    }
-
     if item.owner_address.to_string() != ctx.accounts.authority.key().to_string() {
         return err!(ErrorCode::WrongOwnerAddress);
     }
 
-    msg!("price: {:?}", item.price);
-    msg!("start_date: {:?}", item.start_date);
-    msg!("is_continue_listing: {:?}", item.is_continue_listing);
-    item.price = price;
-    item.start_date = rental_period;
-    item.is_continue_listing = is_continue_list;
-    msg!("price: {:?}", item.price);
-    msg!("start_date: {:?}", item.start_date);
-    msg!("is_continue_listing: {:?}", item.is_continue_listing);
+    if item.num_of_day + item.start_date > now as u64 {
+        msg!("in rent time cant change num_of_day");
+        msg!("price: {:?}", item.price);
+        msg!("start_date: {:?}", item.start_date);
+        msg!("is_continue_listing: {:?}", item.is_continue_listing);
+        msg!("num_of_day: {:?}", item.num_of_day);
+        item.price = price;
+        item.is_continue_listing = is_continue_list;
+        msg!("price: {:?}", item.price);
+        msg!("start_date: {:?}", item.start_date);
+        msg!("is_continue_listing: {:?}", item.is_continue_listing);
+        msg!("num_of_day: {:?}", item.num_of_day);
+    } else {
+        msg!("price: {:?}", item.price);
+        msg!("start_date: {:?}", item.start_date);
+        msg!("is_continue_listing: {:?}", item.is_continue_listing);
+        msg!("num_of_day: {:?}", item.num_of_day);
+        item.price = price;
+        item.num_of_day = rental_period;
+        item.is_continue_listing = is_continue_list;
+        msg!("price: {:?}", item.price);
+        msg!("start_date: {:?}", item.start_date);
+        msg!("is_continue_listing: {:?}", item.is_continue_listing);
+        msg!("num_of_day: {:?}", item.num_of_day);
+    }
     Ok(())
 }

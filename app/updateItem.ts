@@ -46,7 +46,7 @@ async function main() {
     // price tính theo lampart là bội số của 10
     const price = new BN(110);
     // priods tính theo s là bội số của ngày
-    const period = new BN(0 * 86400);
+    const period = new BN(1 * 86400);
     // isListing : 1: tiếp tục tự động list, 0: ko tiếp tục tự động list
     const isListing = new BN(0)
     const tx = await program.rpc.updateItem(price, period, isListing,{
