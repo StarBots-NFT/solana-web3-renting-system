@@ -28,9 +28,9 @@ async function main() {
     const idl = await anchor.Program.fetchIdl(programId.toString());
     console.log("idl: ", idl.instructions[2])
     const program = new anchor.Program(idl, programId);
-    const item = new anchor.web3.PublicKey("DL1Nq2wwMLvom6PRSojiQ9BrM584UPYyTHwgpDY7Yr3m")
-    const ownerAddress = new anchor.web3.PublicKey("2z5Hdf8f5Z9EcNbybvcNRtQj3WVychSD2SYNmSaAy1dZ")
-    const holder = new anchor.web3.PublicKey("6jhCeKn1NSdwxgMXFyEpRAd8t7qaLVbBnr82nhELuFe")
+    const item = new anchor.web3.PublicKey("AwX5gPB31pv54yAVnLxsK2M58XmFBoXyhe4igGUH3QJV")
+    const ownerAddress = new anchor.web3.PublicKey("6zNhgoSkAWz81sy3fu8AwiKUqEScTkQVtbGCMFrxuD3T")
+    const holder = new anchor.web3.PublicKey("FR7VGHVcuowQwypxc5mFEc5qGeG9KK8MctuXzMPAhdCj")
 
     const tx = await program.rpc.rent({
         accounts: {

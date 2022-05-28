@@ -48,7 +48,7 @@ async function main() {
     // priods tính theo s là bội số của ngày
     const period = new BN(0 * 86400);
     // isListing : 1: tiếp tục tự động list, 0: ko tiếp tục tự động list
-    const isListing = new BN(0)
+    const isListing = new BN(1)
     const tx = await program.rpc.updateItem(price, period, isListing,{
         accounts: {
             authority: provider.wallet.publicKey,

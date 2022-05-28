@@ -27,11 +27,15 @@ async function main() {
 
     const idl = await anchor.Program.fetchIdl(programId.toString());
     const program = new anchor.Program(idl, programId);
-    const mint = new anchor.web3.PublicKey("AFFr2Bg6r5ZbKnXK2ny3agBPAesJZEy8H2jHGWTrpUMe")
-    const item = new anchor.web3.PublicKey("4Cx5Z7n2YEhKobWq4EBKW2hnBxJSLkTGk3khnaVsNJx6")
-    const nftAta = new anchor.web3.PublicKey("GqquvykDyo9diYN8pgbtb11bJQqQ1U8vDGMbm8gsYPTt")
-    const treasurer = new anchor.web3.PublicKey("JARESSMjXj7EacAsTJvhdjkWq82ULLeSFnMUhuvG98n6")
-    let nftHolder = new anchor.web3.PublicKey("EigT1aERYDX8D8n8GFFFHK1UYgjrs8oxz2mQbJhBiG16")
+    const mint = new anchor.web3.PublicKey("ANY8uZd9kxDoxPUvQWGf1Teki4CEaW5CXK5N1sBJFm9X")
+    const item = new anchor.web3.PublicKey("AwX5gPB31pv54yAVnLxsK2M58XmFBoXyhe4igGUH3QJV")
+    const nftAta = new anchor.web3.PublicKey("HWa3B6zpKy9EA4m8FdUE4nMKGukMSdz2m6sy3csVVcsK")
+    const [treasurerPublicKey] = await web3.PublicKey.findProgramAddress(
+        [Buffer.from('treasurer'), item.toBuffer()],
+        program.programId,
+    )
+    console.log("treasurerPublicKey: ", treasurerPublicKey.toString())
+    let nftHolder = new anchor.web3.PublicKey("FR7VGHVcuowQwypxc5mFEc5qGeG9KK8MctuXzMPAhdCj")
 
     const tx = await program.rpc.claim({
         accounts: {
@@ -40,7 +44,7 @@ async function main() {
             nftAddress: mint,
             nftHolder: nftHolder,
             ataAddress: nftAta,
-            treasurer: treasurer,
+            treasurer: treasurerPublicKey,
             systemProgram: web3.SystemProgram.programId,
             tokenProgram: utils.token.TOKEN_PROGRAM_ID,
             associatedTokenProgram: utils.token.ASSOCIATED_PROGRAM_ID,
