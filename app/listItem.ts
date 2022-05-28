@@ -17,7 +17,7 @@ export const TOKEN_METADATA_PROGRAM_ID = new PublicKey(
 async function main() {
     // Read the generated IDL.
     // Address of the deployed program.
-    const programId = new anchor.web3.PublicKey('2QofFxHF1vPYKp6hUhi83iZpwLfXSKZsb1QKZwZoDSR8');
+    const programId = new anchor.web3.PublicKey('7fHmrXy8ydjLmA629AtqzvWRkLzH91ex9NEat5nNDKH4');
 
     const keypair = anchor.web3.Keypair.fromSecretKey(new Uint8Array([
         224, 34, 123, 251, 222, 121, 159, 205, 198, 219, 97,
@@ -55,11 +55,6 @@ async function main() {
     )
     console.log("treasurerPublicKey: ", treasurerPublicKey.toString())
 
-    let nftHolder = await utils.token.associatedAddress({
-        mint: mint,
-        owner: treasurerPublicKey,
-    })
-
     let treasurer = treasurerPublicKey
 
     console.log('idl: ', idl.instructions[0].accounts)
@@ -81,7 +76,6 @@ async function main() {
             item: item[0],
             treasurer: treasurer,
             mint: mint,
-            nftHolder: nftHolder,
             nftAta: nftAta,
             systemProgram: web3.SystemProgram.programId,
             tokenProgram: utils.token.TOKEN_PROGRAM_ID,

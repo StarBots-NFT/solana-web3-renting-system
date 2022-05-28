@@ -32,7 +32,7 @@ pub fn exec(ctx: Context<UpdateItem>, price: u64, rental_period: u64, is_continu
     if item.owner_address.to_string() != ctx.accounts.authority.key().to_string() {
         return err!(ErrorCode::WrongOwnerAddress);
     }
-
+    let now = Clock::get().unwrap().unix_timestamp;
     if item.num_of_day + item.start_date > now as u64 {
         msg!("in rent time cant change num_of_day");
         msg!("price: {:?}", item.price);
