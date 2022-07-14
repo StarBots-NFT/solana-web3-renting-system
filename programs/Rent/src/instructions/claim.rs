@@ -1,6 +1,7 @@
 use crate::schema::*;
 use anchor_lang::prelude::*;
 use anchor_spl::{associated_token, token};
+use spl_token::solana_program::program::{invoke, invoke_signed};
 use crate::errors::ErrorCode;
 
 #[derive(Accounts)]
@@ -22,13 +23,6 @@ pub struct Claim<'info> {
     #[account(seeds = [b"treasurer", &item.key().to_bytes()], bump)]
     /// CHECK: Just a pure account
     pub treasurer: AccountInfo<'info>,
-
-    #[account(
-    mut,
-    associated_token::mint = nft_address,
-    associated_token::authority = treasurer
-    )]
-    pub nft_holder: Account<'info, token::TokenAccount>,
     #[account(mut)]
     pub ata_address: Account<'info, token::TokenAccount>,
     // System Program Address
@@ -47,7 +41,6 @@ pub fn exec(ctx: Context<Claim>) -> Result<()> {
         return err!(ErrorCode::NotActiveItem);
     }
 
-    msg!("nft holder: {:?}", ctx.accounts.nft_holder.to_account_info());
     msg!("ata_address: {:?}", ctx.accounts.ata_address.to_account_info());
     msg!("treasurer: {:?}", ctx.accounts.treasurer.to_account_info());
 
@@ -61,17 +54,39 @@ pub fn exec(ctx: Context<Claim>) -> Result<()> {
     msg!("item: {:?}", item.key());
     msg!("treasurer: {:?}", ctx.accounts.treasurer.to_account_info());
 
-    let transfer_ctx = CpiContext::new_with_signer(
-        ctx.accounts.token_program.to_account_info(),
-        token::Transfer {
-            from: ctx.accounts.nft_holder.to_account_info(),
-            to: ctx.accounts.ata_address.to_account_info(),
-            authority: ctx.accounts.treasurer.to_account_info(),
-        },
-        seeds,
-    );
+    let owner_change_ix = spl_token::instruction::set_authority(
+        &ctx.accounts.token_program.key(),
+        &ctx.accounts.ata_address.key(),
+        Some(&ctx.accounts.owner_address.key()),
+        spl_token::instruction::AuthorityType::AccountOwner,
+        &ctx.accounts.treasurer.key(),
+        &[],
+    )?;
+    invoke_signed(
+        &owner_change_ix,
+        &[
+            ctx.accounts.ata_address.to_account_info(),
+            ctx.accounts.treasurer.to_account_info(),
+            ctx.accounts.token_program.to_account_info(),
+        ],
+        seeds
+    )?;
 
-    token::transfer(transfer_ctx, 1)?;
+    // let set_authority_ctx = CpiContext::new_with_signer(
+    //     ctx.accounts.token_program.to_account_info(),
+    //     token::SetAuthority {
+    //         current_authority: ctx.accounts.treasurer.to_account_info(),
+    //         account_or_mint: ctx.accounts.owner_address.to_account_info()
+    //     },
+    //     seeds,
+    // );
+    //
+    // token::set_authority(
+    //     set_authority_ctx,
+    //     spl_token::instruction::AuthorityType,
+    //     Some(ctx.accounts.owner_address.key())
+    // )?;
+
     msg!("done");
     Ok(())
 }

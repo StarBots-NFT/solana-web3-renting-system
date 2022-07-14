@@ -34,7 +34,7 @@ pub fn exec(ctx: Context<RentItem>) -> Result<()> {
     msg!("owner: {:?}", item.owner_address);
     msg!("renter: {:?}", item.rent_address);
     msg!("price: {:?}", item.price);
-    if item.num_of_day + item.start_date > now as u64 && item.rent_address.to_string() != "11111111111111111111111111111111"  {
+    if item.num_of_day + item.start_date > now as u64 {
         return err!(ErrorCode::NotActiveItem);
     }
 

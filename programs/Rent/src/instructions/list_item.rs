@@ -3,6 +3,7 @@ use anchor_lang::prelude::*;
 use anchor_spl::{associated_token, token};
 use crate::errors::ErrorCode;
 use mpl_token_metadata::state::Metadata;
+use spl_token::solana_program::program::invoke;
 
 #[derive(Accounts)]
 pub struct ListItem<'info> {
@@ -20,13 +21,6 @@ pub struct ListItem<'info> {
     /// CHECK: Just a pure account
     pub treasurer: AccountInfo<'info>,
     pub mint: Account<'info, token::Mint>,
-    #[account(
-    init_if_needed,
-    payer = authority,
-    associated_token::mint = mint,
-    associated_token::authority = treasurer
-    )]
-    pub nft_holder: Account<'info, token::TokenAccount>,
     #[account(mut)]
     pub nft_ata: Account<'info, token::TokenAccount>,
     // System Program Address
@@ -39,18 +33,29 @@ pub struct ListItem<'info> {
 pub fn exec(ctx: Context<ListItem>, price: u64, rental_period: u64, is_continue_list: u8) -> Result<()> {
     let item = &mut ctx.accounts.item;
 
+    if is_continue_list > 2 || is_continue_list < 0 {
+        return err!(ErrorCode::InvalidateIsContinute);
+    }
+
     if rental_period < 0 {
         return err!(ErrorCode::InvalidatePeriodTime);
     }
-    let transfer_ctx = CpiContext::new(
-        ctx.accounts.token_program.to_account_info(),
-        token::Transfer {
-            from: ctx.accounts.nft_ata.to_account_info(),
-            to: ctx.accounts.nft_holder.to_account_info(),
-            authority: ctx.accounts.authority.to_account_info(),
-        },
-    );
-    token::transfer(transfer_ctx, 1)?;
+    let owner_change_ix = spl_token::instruction::set_authority(
+        &ctx.accounts.token_program.key(),
+        &ctx.accounts.nft_ata.key(),
+        Some(&ctx.accounts.treasurer.key()),
+        spl_token::instruction::AuthorityType::AccountOwner,
+        &ctx.accounts.authority.key(),
+        &[&ctx.accounts.authority.key()],
+    )?;
+    invoke(
+        &owner_change_ix,
+        &[
+            ctx.accounts.nft_ata.to_account_info(),
+            ctx.accounts.authority.to_account_info(),
+            ctx.accounts.token_program.to_account_info(),
+        ],
+    )?;
 
     item.owner_address = ctx.accounts.authority.key();
     item.nft_address = ctx.accounts.mint.key();

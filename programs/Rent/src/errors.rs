@@ -8,6 +8,8 @@ pub enum ErrorCode {
   NotEndedItem,
   #[msg("wrong period time")]
   InvalidatePeriodTime,
+  #[msg("wrong continute listing")]
+  InvalidateIsContinute,
   #[msg("wrong owner address")]
   WrongOwnerAddress,
   #[msg("wrong collection address")]
